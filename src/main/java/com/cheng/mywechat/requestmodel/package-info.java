@@ -5,4 +5,4 @@
  * @author Andy
  *
  */
-package com.zerogmi.match;
+package com.cheng.mywechat.requestmodel;

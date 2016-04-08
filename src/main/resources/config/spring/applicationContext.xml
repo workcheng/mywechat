@@ -19,7 +19,15 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 	<context:component-scan base-package="**.dao.impl" />
 	
 	<!-- 加载数据库连接信息db.properties -->
-	<context:property-placeholder location="classpath:/config/db/db.properties" />
+	<!-- <context:property-placeholder location="classpath:/config/db/db.properties" /> -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+	    <property name="locations">  
+	       <list>  
+	          <value>classpath:/config/db/db.properties</value>  
+	          <value>classpath:/config/wechat/wechat.properties</value>  
+	        </list>  
+	    </property>  
+	</bean>
 
 	<!-- 配置数据源 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -49,4 +57,14 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 	<!-- 启用事务注解，后面在Service类或方法上面加上@Transactional注解 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
+	<bean id="WxMpServiceImpl" class="me.chanjar.weixin.mp.api.WxMpServiceImpl">
+		<property name="wxMpConfigStorage" ref="WxMpInMemoryConfigStorage"></property>
+	</bean>
+	
+	<bean id="WxMpInMemoryConfigStorage" class="me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage">
+		<property name="appId" value="${wechat.APP_ID}"/>
+		<property name="secret" value="${wechat.SECRET}"/>
+		<property name="aesKey" value="${wechat.AES_KEY}"/>
+		<property name="token" value="${wechat.TOKEN}"/>
+	</bean>
 </beans>

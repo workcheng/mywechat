@@ -1,9 +1,7 @@
 package com.cheng.mywechat.requestmodel;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 public class Test {
-  @NotEmpty
+  
   private String skillName;
   private String desc;
 

@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" 
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
 id="WebApp_ID" version="3.0">
-  <display-name>match</display-name>
+  <display-name>mywechat</display-name>
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
@@ -18,7 +18,7 @@ id="WebApp_ID" version="3.0">
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
   </listener>
   <servlet>
-    <servlet-name>match</servlet-name>
+    <servlet-name>mywechat</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
@@ -27,7 +27,7 @@ id="WebApp_ID" version="3.0">
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>match</servlet-name>
+    <servlet-name>mywechat</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
   <context-param>

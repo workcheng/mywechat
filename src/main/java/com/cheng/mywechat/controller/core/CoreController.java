@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cheng.mywechat.comm.logger.ZeroLogger;
 import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
+import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
 
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -32,6 +34,8 @@ import me.chanjar.weixin.mp.bean.result.WxMpUser;
 @Controller
 public class CoreController {
   private static final ZeroLogger log = ZeroLoggerFactory.getLogger(CoreController.class);
+  @Autowired
+  private ZGRedisTemplete         zgRedisTemplete;
   @Autowired
   WxMpServiceImpl                 wxMpService;
   protected WxMpMessageRouter     wxMpMessageRouter;
@@ -62,10 +66,9 @@ public class CoreController {
     wxMpMessageRouter
 
     .rule().async(false).content("andy").handler(test).end()
-    .rule().async(false).content("fun").handler(fun).end()
+        .rule().async(false).content("fun").handler(fun).end()
 
-    .rule().async(false).handler(reply).end()
-    ;
+    .rule().async(false).handler(reply).end();
   }
 
   private void service(HttpServletRequest request, HttpServletResponse response)
@@ -97,9 +100,9 @@ public class CoreController {
       // 明文传输的消息
       WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(request.getInputStream());
       WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
-//      if (null != outMessage) {
-        response.getWriter().write(outMessage.toXml());
-//      }
+      // if (null != outMessage) {
+      response.getWriter().write(outMessage.toXml());
+      // }
       return;
     }
 
@@ -131,6 +134,7 @@ public class CoreController {
 
     return test;
   }
+
   private WxMpMessageHandler reply() {
     WxMpMessageHandler test = new WxMpMessageHandler() {
       public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context,
@@ -142,49 +146,50 @@ public class CoreController {
     };
     return test;
   }
+
   private WxMpMessageHandler fun() {
     WxMpMessageHandler test = new WxMpMessageHandler() {
       public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage, Map<String, Object> context,
           WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
-        String lang = "zh_CN"; //语言
+        String lang = "zh_CN"; // 语言
         WxMpUser user = wxMpService.userInfo(wxMessage.getFromUserName(), lang);
-        log.info("user="+user.toString());
-        //同步回复消息
+        log.info("user=" + user.toString());
+        zgRedisTemplete.setValue(wxMessage.getFromUserName(), user,1);
+//        zgRedisTemplete.setHash(wxMessage.getFromUserName(), user,1);
+        // 同步回复消息
         WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
         item.setDescription(user.getProvince());
         item.setPicUrl(user.getHeadImgUrl());
         item.setTitle(user.getNickname());
-        item.setUrl("http://www.baidu.com");
+        item.setUrl("http://wechat1.tunnel.qydev.com/mywechat/base/test/"+wxMessage.getFromUserName());
 
         WxMpXmlOutNewsMessage m = WxMpXmlOutMessage.NEWS()
-          .fromUser(wxMessage.getToUserName())
-          .toUser(wxMessage.getFromUserName())
-          .addArticle(item)
-          .build();
-        
-        //主动发送消息
-/*        WxMpCustomMessage.WxArticle article1 = new WxMpCustomMessage.WxArticle();
-        article1.setUrl("www.baidu.com");
-        article1.setPicUrl("www.baidu.com");
-        article1.setDescription("Is Really A Happy Day");
-        article1.setTitle("Happy Day");
-
-        WxMpCustomMessage.WxArticle article2 = new WxMpCustomMessage.WxArticle();
-        article2.setUrl("www.baidu.com");
-        article2.setPicUrl("www.baidu.com");
-        article2.setDescription("Is Really A Happy Day");
-        article2.setTitle("Happy Day");
-
-        WxMpCustomMessage message = WxMpCustomMessage.NEWS()
+            .fromUser(wxMessage.getToUserName())
             .toUser(wxMessage.getFromUserName())
-            .addArticle(article1)
-            .addArticle(article2)
+            .addArticle(item)
             .build();
-        wxMpService.customMessageSend(message);*/
+
+        // 主动发送消息
+        /*
+         * WxMpCustomMessage.WxArticle article1 = new
+         * WxMpCustomMessage.WxArticle(); article1.setUrl("www.baidu.com");
+         * article1.setPicUrl("www.baidu.com"); article1.setDescription(
+         * "Is Really A Happy Day"); article1.setTitle("Happy Day");
+         * 
+         * WxMpCustomMessage.WxArticle article2 = new
+         * WxMpCustomMessage.WxArticle(); article2.setUrl("www.baidu.com");
+         * article2.setPicUrl("www.baidu.com"); article2.setDescription(
+         * "Is Really A Happy Day"); article2.setTitle("Happy Day");
+         * 
+         * WxMpCustomMessage message = WxMpCustomMessage.NEWS()
+         * .toUser(wxMessage.getFromUserName()) .addArticle(article1)
+         * .addArticle(article2) .build();
+         * wxMpService.customMessageSend(message);
+         */
         return m;
       }
     };
-    
+
     return test;
   }
 

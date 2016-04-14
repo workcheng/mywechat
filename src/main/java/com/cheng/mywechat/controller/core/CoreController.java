@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,6 +15,7 @@ import com.cheng.mywechat.comm.logger.ZeroLogger;
 import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
 import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
 
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.common.util.StringUtils;
@@ -24,6 +24,7 @@ import me.chanjar.weixin.mp.api.WxMpMessageHandler;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.WxMpServiceImpl;
+import me.chanjar.weixin.mp.bean.WxMpCustomMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
@@ -65,8 +66,8 @@ public class CoreController {
     wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
     wxMpMessageRouter
 
+    .rule().async(false).msgType(WxConsts.MASS_MSG_TEXT).handler(fun).end()
     .rule().async(false).content("andy").handler(test).end()
-        .rule().async(false).content("fun").handler(fun).end()
 
     .rule().async(false).handler(reply).end();
   }
@@ -153,8 +154,7 @@ public class CoreController {
           WxMpService wxMpService, WxSessionManager sessionManager) throws WxErrorException {
         String lang = "zh_CN"; // 语言
         WxMpUser user = wxMpService.userInfo(wxMessage.getFromUserName(), lang);
-        log.info("user=" + user.toString());
-        zgRedisTemplete.setValue(wxMessage.getFromUserName(), user,1);
+        zgRedisTemplete.setValue(wxMessage.getFromUserName(), wxMessage.getContent(),1);
 //        zgRedisTemplete.setHash(wxMessage.getFromUserName(), user,1);
         // 同步回复消息
         WxMpXmlOutNewsMessage.Item item = new WxMpXmlOutNewsMessage.Item();
@@ -168,7 +168,9 @@ public class CoreController {
             .toUser(wxMessage.getFromUserName())
             .addArticle(item)
             .build();
-
+        WxMpCustomMessage message  = WxMpCustomMessage.TEXT()
+            .content("我最多只能接受<b>2048</b>个字符\n"+"当前接受字符数量：\n"+wxMessage.getContent().length()).toUser(wxMessage.getFromUserName()).build();
+        wxMpService.customMessageSend(message);
         // 主动发送消息
         /*
          * WxMpCustomMessage.WxArticle article1 = new

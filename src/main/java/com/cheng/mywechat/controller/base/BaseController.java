@@ -17,16 +17,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cheng.mywechat.comm.logger.ZeroLogger;
+import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
 import com.cheng.mywechat.comm.properties.ZGProperties;
 import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
+import com.cheng.mywechat.controller.core.CoreController;
 
+import me.chanjar.weixin.common.util.StringUtils;
+import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 @Controller
 @RequestMapping("/base")
 public class BaseController {
+  private static final ZeroLogger log = ZeroLoggerFactory.getLogger(BaseController.class);
   @Autowired
   private ZGRedisTemplete zgRedisTemplete;
+  @Autowired
+  private WxMpService     wxMpService;
 
   @RequestMapping(value = "/test")
   public @ResponseBody Object test() {
@@ -46,13 +54,14 @@ public class BaseController {
     try {
       // return ZGProperties.get("config/textConfig/html.property",
       // "mail.register.verify");
-//      WxMpUser user = (WxMpUser) zgRedisTemplete.getHash(key,"WxMpUser",1);
-      WxMpUser user = (WxMpUser) zgRedisTemplete.getValue(key);
-      if (null != user) {
-        String subTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS").format(1000*user.getSubscribeTime());
+      // WxMpUser user = (WxMpUser) zgRedisTemplete.getHash(key,"WxMpUser",1);
+      String message = (String) zgRedisTemplete.getValue(key);
+      if (StringUtils.isNotBlank(message)) {
+        WxMpUser user = wxMpService.userInfo(key, "zh_CN");
+        String subTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS").format(1000 * user.getSubscribeTime());
         String body = MessageFormat.format(ZGProperties.get("config/textConfig/test.properties",
             "hello.body"), user.getNickname(), user.getSex(), user.getCity(), user.getProvince(), user.getCountry(),
-            user.getHeadImgUrl(), subTime,zgRedisTemplete.getExpire(key)+"秒");
+            user.getHeadImgUrl(), subTime, zgRedisTemplete.getExpire(key) + "秒",message);
         return body;
       } else {
         return "已失效";

@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.cheng.mywechat.comm.constant.CommonConstant;
 import com.cheng.mywechat.comm.logger.ZeroLogger;
 import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
+import com.cheng.mywechat.comm.properties.ZGProperties;
 import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
 
 import me.chanjar.weixin.common.api.WxConsts;
@@ -161,7 +163,13 @@ public class CoreController {
         item.setDescription(user.getProvince());
         item.setPicUrl(user.getHeadImgUrl());
         item.setTitle(user.getNickname());
-        item.setUrl("http://wechat1.tunnel.qydev.com/mywechat/base/test/"+wxMessage.getFromUserName());
+        String url = "";
+        try {
+          url = ZGProperties.get("config/wechat/wechat.properties", CommonConstant.INTRODUCE_URL);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        item.setUrl(url+wxMessage.getFromUserName());
 
         WxMpXmlOutNewsMessage m = WxMpXmlOutMessage.NEWS()
             .fromUser(wxMessage.getToUserName())

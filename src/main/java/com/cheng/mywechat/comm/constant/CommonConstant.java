@@ -10,8 +10,9 @@ package com.cheng.mywechat.comm.constant;
  */
 public class CommonConstant {
 
-  public final static String COMMA       = ",";
-  public final static String COLON       = ":";
-  public final static String VERTICAL    = "|";
-  public final static String TRACKING_ID = "Tracking-ID";
+  public final static String COMMA         = ",";
+  public final static String COLON         = ":";
+  public final static String VERTICAL      = "|";
+  public final static String TRACKING_ID   = "Tracking-ID";
+  public final static String INTRODUCE_URL = "introduce_url";
 }

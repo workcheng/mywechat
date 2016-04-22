@@ -68,8 +68,8 @@ public class CoreController {
     wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
     wxMpMessageRouter
 
-    .rule().async(false).msgType(WxConsts.MASS_MSG_TEXT).handler(fun).end()
     .rule().async(false).content("andy").handler(test).end()
+    .rule().async(false).msgType(WxConsts.MASS_MSG_TEXT).handler(fun).end()
 
     .rule().async(false).handler(reply).end();
   }

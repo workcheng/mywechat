@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC " -//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.test.model.UserMapper">
+	<select id="getUser" parameterType="int" resultType="user">
+		SELECT a.`name`,a.`userid` FROM T_USER a WHERE a.`userid`=#{_parameter}
+	</select>
+</mapper>

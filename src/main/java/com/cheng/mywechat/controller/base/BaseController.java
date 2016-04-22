@@ -1,5 +1,6 @@
 package com.cheng.mywechat.controller.base;
 
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import com.cheng.mywechat.comm.logger.ZeroLogger;
 import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
 import com.cheng.mywechat.comm.properties.ZGProperties;
 import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
-import com.cheng.mywechat.controller.core.CoreController;
+import com.cheng.mywechat.service.test.TestService;
 
 import me.chanjar.weixin.common.util.StringUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -35,6 +36,8 @@ public class BaseController {
   private ZGRedisTemplete zgRedisTemplete;
   @Autowired
   private WxMpService     wxMpService;
+  @Autowired
+  private TestService     testService;
 
   @RequestMapping(value = "/test")
   public @ResponseBody Object test() {
@@ -70,6 +73,18 @@ public class BaseController {
       e.printStackTrace();
       return null;
     }
+  }
+  
+  @RequestMapping("/test/mybatis")
+  @ResponseBody
+  public Object giveMeAUser(){
+    try {
+      return testService.getTest();
+    } catch (SQLException e) {
+      log.error("errmsg",e);
+      return null;
+    }
+    
   }
 
 }

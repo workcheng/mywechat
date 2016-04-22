@@ -12,7 +12,9 @@
 	<context:annotation-config />
 
 	<!-- 配置自动扫描 -->
-	<context:component-scan base-package="**.controller" />
+	<context:component-scan base-package="**.controller">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/> 
+	</context:component-scan>
 
 	<!-- 视图解析 -->
 	<bean id="validator"

@@ -43,9 +43,10 @@ public class TimeBasedAccessInterceptor extends HandlerInterceptorAdapter {
       if (now < openingTime || now > closingTime) {
 //        request.setAttribute("msg", "注册开放时间：9：00-12：00");
 //        request.getRequestDispatcher("/msg.jsp").forward(request, response);
-        response.setContentType("application/json; charset=utf-8");
-        response.getWriter().write("注册开放时间：9：00-12：00");
-        return false;
+//        response.setContentType("application/json; charset=utf-8");
+//        response.getWriter().write("注册开放时间：9：00-12：00");
+//        return false;
+        return true;
       }
       return true;
     }

@@ -41,6 +41,7 @@ public class CoreController {
   private ZGRedisTemplete         zgRedisTemplete;
   @Autowired
   WxMpServiceImpl                 wxMpService;
+  @Autowired
   protected WxMpMessageRouter     wxMpMessageRouter;
   @Autowired
   protected WxMpConfigStorage     wxMpConfigStorage;
@@ -65,7 +66,7 @@ public class CoreController {
 
     // ==============================
 
-    wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
+ //   wxMpMessageRouter = new WxMpMessageRouter(wxMpService);
     wxMpMessageRouter
 
     .rule().async(false).content("andy").handler(test).end()

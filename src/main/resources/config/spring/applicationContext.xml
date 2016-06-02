@@ -78,6 +78,10 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 		<property name="aesKey" value="${wechat.AES_KEY}"/>
 		<property name="token" value="${wechat.TOKEN}"/>
 	</bean>
+		
+	<bean id="wxMpMessageRouter" class="me.chanjar.weixin.mp.api.WxMpMessageRouter" scope="singleton">
+		<constructor-arg index="0" ref="WxMpServiceImpl" />
+	</bean>
 	
 	<!-- Redis -->
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">  
@@ -111,5 +115,5 @@ http://www.springframework.org/schema/tx/spring-tx.xsd">
 		<property name="redisTemplete" ref="redisTemplate"/>
 		<property name="usePool" value="true" />
 	</bean>
-	
+
 </beans>

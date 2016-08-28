@@ -1,5 +1,22 @@
 package com.cheng.mywechat.controller.base;
 
+import com.cheng.mywechat.comm.logger.ZeroLogger;
+import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
+import com.cheng.mywechat.comm.properties.ZGProperties;
+import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
+import com.cheng.mywechat.service.test.TestService;
+import me.chanjar.weixin.common.util.StringUtils;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -7,26 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.cheng.mywechat.comm.logger.ZeroLogger;
-import com.cheng.mywechat.comm.logger.ZeroLoggerFactory;
-import com.cheng.mywechat.comm.properties.ZGProperties;
-import com.cheng.mywechat.comm.redis.ZGRedisTemplete;
-import com.cheng.mywechat.service.test.TestService;
-
-import me.chanjar.weixin.common.util.StringUtils;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 @Controller
 @RequestMapping("/base")
@@ -39,7 +36,7 @@ public class BaseController {
   @Autowired
   private TestService     testService;
 
-  @RequestMapping(value = "/test")
+  @RequestMapping(value = "/tes")
   public @ResponseBody Object test() {
     Map<String, Object> map = new HashMap<>();
     List<String> list = new ArrayList<>();
@@ -75,7 +72,7 @@ public class BaseController {
     }
   }
   
-  @RequestMapping("/test/mybatis")
+  @RequestMapping("/testing/mybatis")
   @ResponseBody
   public Object giveMeAUser(){
     try {
